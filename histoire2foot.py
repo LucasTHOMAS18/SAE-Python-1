@@ -106,8 +106,6 @@ def equipe_gagnante(match):
     
     if match[3] < match[4]:
         return match[2]
-    
-    return None
 
 
 def victoire_a_domicile(match):
@@ -190,17 +188,13 @@ def est_bien_trie(liste_matchs):
 
     Returns:
         bool: True si la liste est bien triée et False sinon
-    """    
-    est_trie = True
+    """
 
     for i in range(1, len(liste_matchs)):
-        if liste_matchs[i][0] < liste_matchs[i-1][0]:
-           est_trie = False
-        
-        elif liste_matchs[i][0] == liste_matchs[i-1][0] and liste_matchs[i][1] < liste_matchs[i-1][1]:
-            est_trie = False
+        if liste_matchs[i][0] < liste_matchs[i-1][0] or (liste_matchs[i][0] == liste_matchs[i-1][0] and liste_matchs[i][1] < liste_matchs[i-1][1]):
+            return False
 
-    return est_trie
+    return True
 
 
 def fusionner_matchs(liste_matchs1, liste_matchs2):
@@ -215,6 +209,7 @@ def fusionner_matchs(liste_matchs1, liste_matchs2):
         list: la liste triée sans doublon comportant tous les matchs de liste_matchs1 et liste_matchs2
     """ 
 
+    # TODO
     return sorted(sorted(list(set(liste_matchs1 + liste_matchs2)), key=lambda match: match[1]), key=lambda match: match[0])
 
 
@@ -229,12 +224,23 @@ def resultats_equipe(liste_matchs, equipe):
         tuple: un triplet d'entiers contenant le nombre de victoires, nuls et défaites de l'équipe
     """    
     nb_victoires = 0
+    nb_defaites = 0
+    nb_nul = 0
 
     for match in liste_matchs:
-        if equipe_gagnante(match) == equipe:
-            nb_victoires += 1
+        if equipe in match:
+            gagnant = equipe_gagnante(match)
 
-    return nb_victoires
+            if gagnant == equipe:
+                nb_victoires += 1
+
+            elif gagnant is None:
+                nb_nul += 1
+
+            else:
+                nb_defaites += 1
+
+    return nb_victoires, nb_nul, nb_defaites
 
 
 def plus_gros_scores(liste_matchs):
@@ -259,7 +265,13 @@ def liste_des_equipes(liste_matchs):
     Returns:
         list: une liste de str contenant le noms des équipes ayant jouer des matchs
     """
-    ...
+    set_equipes = set()
+
+    for match in liste_matchs:
+        set_equipes.add(match[1])
+        set_equipes.add(match[2])
+
+    return list(set_equipes)
 
 
 def premiere_victoire(liste_matchs, equipe):
@@ -271,15 +283,11 @@ def premiere_victoire(liste_matchs, equipe):
 
     Returns:
         str: la date de la première victoire de l'equipe
-    """    
-    date = None
-    # TODO L'Iran gagne ?
-    
-    for match in liste_matchs:
-        if equipe_gagnante(match) == equipe and date is None:
-            date = match[0]
+    """
 
-    return date
+    for match in liste_matchs:
+        if equipe_gagnante(match) == equipe:
+            return match[0]
 
 
 def nb_matchs_sans_defaites(liste_matchs, equipe):
@@ -292,7 +300,24 @@ def nb_matchs_sans_defaites(liste_matchs, equipe):
     Returns:
         int: le plus grand nombre de matchs consécutifs sans défaite du pays nom_pays
     """
-    ...
+    max_nb_victoires = 0
+    nb_victoires = 0
+    
+    for match in liste_matchs:
+        if equipe in match:
+            if equipe_gagnante(match) == equipe:
+                nb_victoires += 1
+
+            else:
+                if nb_victoires > max_nb_victoires:
+                    max_nb_victoires = nb_victoires
+                
+                nb_victoires = 0
+
+    if nb_victoires > max_nb_victoires:
+        max_nb_victoires = nb_victoires
+
+    return max_nb_victoires
 
 
 def charger_matchs(nom_fichier):
