@@ -208,7 +208,7 @@ def fusionner_matchs(liste_matchs1, liste_matchs2):
     Returns:
         list: la liste triée sans doublon comportant tous les matchs de liste_matchs1 et liste_matchs2
     """ 
-
+    
     # TODO
     return sorted(sorted(list(set(liste_matchs1 + liste_matchs2)), key=lambda match: match[1]), key=lambda match: match[0])
 
@@ -302,7 +302,7 @@ def nb_matchs_sans_defaites(liste_matchs, equipe):
     """
     max_nb_victoires = 0
     nb_victoires = 0
-    
+
     for match in liste_matchs:
         if equipe in match:
             if equipe_gagnante(match) == equipe:

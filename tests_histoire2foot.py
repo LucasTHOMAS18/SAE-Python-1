@@ -98,8 +98,10 @@ def test_victoire_a_domicile():
     assert not histoire2foot.victoire_a_domicile(match3)
 
 def test_nb_buts_marques():
-    # TESTS A COMPLETER
-    ...
+    assert histoire2foot.nb_buts_marques(liste1[0]) == 2
+    assert histoire2foot.nb_buts_marques(liste1[1]) == 2
+    assert histoire2foot.nb_buts_marques(liste1[2]) == 3
+    assert histoire2foot.nb_buts_marques(liste1[3]) == 4
 
 def test_matchs_ville():
     assert histoire2foot.matchs_ville(liste1,'Reims') == [('1970-04-28', 'France', 'Romania', 2, 0, 'Friendly', 'Reims', 'France', False)]
@@ -114,8 +116,9 @@ def test_nombre_moyen_buts():
     assert histoire2foot.nombre_moyen_buts(liste3,'Friendly') == 3.0
 
 def test_resultats_equipe():
-    # TESTS A COMPLETER
-    ...
+    assert histoire2foot.resultats_equipe(liste1, "France") == (3, 1, 0)
+    assert histoire2foot.resultats_equipe(liste1, "Norway") == (0, 0, 1)
+    assert histoire2foot.resultats_equipe(liste1, "Bulgaria") == (0, 1, 0)
 
 def test_plus_gros_scores():
     # TESTS A COMPLETER
@@ -131,12 +134,15 @@ def test_liste_des_equipes():
 
 def test_premiere_victoire():
     assert histoire2foot.premiere_victoire(liste1, "France") == "1970-04-28"
-    assert histoire2foot.premiere_victoire(liste1, "England") == "1901-03-09"
+    assert histoire2foot.premiere_victoire(liste1, "England") == None
     assert histoire2foot.premiere_victoire(liste1, "Iran") == None
+    assert histoire2foot.premiere_victoire(liste2, "England") == "1901-03-09"
     
 def test_nb_matchs_sans_defaites():
-    # TESTS A COMPLETER
-    ...
+    assert histoire2foot.nb_matchs_sans_defaites(liste1, "France") == 3
+    assert histoire2foot.nb_matchs_sans_defaites(liste2, "England") == 3
+    assert histoire2foot.nb_matchs_sans_defaites(liste3, "Brazil") == 1
+    assert histoire2foot.nb_matchs_sans_defaites(liste3, "Belgium") == 0
 
 def test_est_bien_trie():
     # TESTS A COMPLETER
