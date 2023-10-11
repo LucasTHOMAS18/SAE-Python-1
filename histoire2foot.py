@@ -191,7 +191,9 @@ def est_bien_trie(liste_matchs):
     """
 
     for i in range(1, len(liste_matchs)):
-        if liste_matchs[i][0] < liste_matchs[i-1][0] or (liste_matchs[i][0] == liste_matchs[i-1][0] and liste_matchs[i][1] < liste_matchs[i-1][1]):
+        match = liste_matchs[i]
+        match_precedent = liste_matchs[i-1]
+        if match[0] + match[1] < match_precedent[0] + match_precedent[1]:
             return False
 
     return True
@@ -208,10 +210,26 @@ def fusionner_matchs(liste_matchs1, liste_matchs2):
     Returns:
         list: la liste triée sans doublon comportant tous les matchs de liste_matchs1 et liste_matchs2
     """ 
-    
-    # TODO
-    return sorted(sorted(list(set(liste_matchs1 + liste_matchs2)), key=lambda match: match[1]), key=lambda match: match[0])
+    res = []
+    i = 0
+    j = 0
 
+    while i < len(liste_matchs1) and j < len(liste_matchs2):
+        if liste_matchs1[i][0] + liste_matchs1[i][1] < liste_matchs2[j][0] + liste_matchs2[j][1]:
+            if liste_matchs1[i] not in res:
+                res.append(liste_matchs1[i])
+            
+            i += 1
+        else:
+            if liste_matchs2[j] not in res:
+                res.append(liste_matchs2[j])
+            
+            j += 1
+
+    res += liste_matchs1[i:]
+    res += liste_matchs2[j:]
+
+    return res
 
 def resultats_equipe(liste_matchs, equipe):
     """donne le nombre de victoire, de matchs nuls et de défaites pour une équipe donnée
@@ -228,13 +246,13 @@ def resultats_equipe(liste_matchs, equipe):
     nb_nul = 0
 
     for match in liste_matchs:
-        if equipe in match:
-            gagnant = equipe_gagnante(match)
+        gagnant = equipe_gagnante(match)
 
-            if gagnant == equipe:
-                nb_victoires += 1
+        if gagnant == equipe:
+            nb_victoires += 1
 
-            elif gagnant is None:
+        elif equipe in match:
+            if gagnant is None:
                 nb_nul += 1
 
             else:
@@ -252,8 +270,8 @@ def plus_gros_scores(liste_matchs):
     Returns:
         list: la liste des matchs avec le plus grand écart entre vainqueur et perdant
     """    
-    ...
 
+    return max_liste(liste_matchs, key=lambda match: abs(match[3] - match[4]))
 
 def liste_des_equipes(liste_matchs):
     """retourne la liste des équipes qui ont participé aux matchs de la liste
@@ -302,22 +320,23 @@ def nb_matchs_sans_defaites(liste_matchs, equipe):
     """
     max_nb_victoires = 0
     nb_victoires = 0
-
+    
     for match in liste_matchs:
-        if equipe in match:
-            if equipe_gagnante(match) == equipe:
-                nb_victoires += 1
+        if equipe_gagnante(match) == equipe:
+            nb_victoires += 1
 
-            else:
-                if nb_victoires > max_nb_victoires:
-                    max_nb_victoires = nb_victoires
-                
-                nb_victoires = 0
+        elif equipe in match:
+            if nb_victoires > max_nb_victoires:
+                max_nb_victoires = nb_victoires
+            
+            nb_victoires = 0
 
     if nb_victoires > max_nb_victoires:
         max_nb_victoires = nb_victoires
 
     return max_nb_victoires
+
+import csv
 
 
 def charger_matchs(nom_fichier):
@@ -329,8 +348,19 @@ def charger_matchs(nom_fichier):
     Returns:
         list: la liste des matchs du fichier
     """    
-    ...
+    liste = []
 
+    with open(nom_fichier, "r", encoding="utf-8") as fichier_csv:
+        reader = csv.reader(fichier_csv)
+        next(reader)
+
+        for ligne in reader:
+            ligne[3] = int(ligne[3])
+            ligne[4] = int(ligne[4])
+            ligne[8] = ligne[8].lower() == "true"
+            liste.append(ligne)
+
+    return liste
 
 def sauver_matchs(liste_matchs,nom_fichier):
     """sauvegarde dans un fichier au format CSV une liste de matchs
@@ -342,14 +372,18 @@ def sauver_matchs(liste_matchs,nom_fichier):
     Returns:
         None: cette fonction ne retourne rien
     """    
-    ...
+    
+    with open(nom_fichier, "w") as fichier_csv:
+        writer = csv.writer(fichier_csv)
+        writer.writerow(["date", "home_team", "away_team", "home_score", "away_score", "tournament", "city", "country", "neutral"])
 
+        for match in liste_matchs:
+            writer.writerow(match)
 
 # Fonctions à implémenter dont il faut également implémenter les tests
-
-
 def plus_de_victoires_que_defaites(liste_matchs, equipe):
     """vérifie si une équipe donnée a obtenu plus de victoires que de défaites
+    
     Args:
         liste_matchs (list): une liste de matchs
         equipe (str): le nom d'une équipe (pays)
@@ -357,7 +391,33 @@ def plus_de_victoires_que_defaites(liste_matchs, equipe):
     Returns:
         bool: True si l'equipe a obtenu plus de victoires que de défaites
     """
-    ...
+    resultats = resultats_equipe(liste_matchs, equipe)
+    return resultats[0] > resultats[2]
+
+def max_liste(liste, key=lambda x: x):
+    """retourne la liste de tout qui ont le plus d'un certain attribut passé en paramètre via "key".
+    Similaire a la fonction "max", mais retourne une liste à la place.
+
+    Args:
+        liste (list): une liste de matchs
+        key (Callable): fonction pour récupérer l'attribut que l'on souhaite comparé
+
+    Returns:
+        list: la liste de tout les element qui ont le plus de l'attribut
+    """
+    maximum = 0
+    res = []
+
+    for elem in liste:
+        attribut = key(elem)
+        if attribut > maximum:
+            res = [elem]
+            maximum = attribut
+
+        elif attribut == maximum:
+            res.append(elem)
+
+    return res
 
 
 def matchs_spectaculaires(liste_matchs):
@@ -370,8 +430,8 @@ def matchs_spectaculaires(liste_matchs):
     Returns:
         list: la liste des matchs les plus spectaculaires
     """
-    ...
 
+    return max_liste(liste_matchs, lambda match: match[3] + match[4])
 
 def meilleures_equipes(liste_matchs):
     """retourne la liste des équipes de la liste qui ont le plus petit nombre de defaites
@@ -382,9 +442,26 @@ def meilleures_equipes(liste_matchs):
     Returns:
         list: la liste des équipes qui ont le plus petit nombre de defaites
     """
-    ...
+    equipes = []
+    minimum = 0
 
+    for match in liste_matchs:
+        resultat_equipe1 = resultats_equipe(liste_matchs, match[1])[2]
+        resultat_equipe2 = resultats_equipe(liste_matchs, match[2])[2]
 
+        if resultat_equipe1 < minimum:
+            equipes = [match[1]]
+            minimum = resultat_equipe1
 
+        elif resultat_equipe1 == minimum:
+            equipes.append(match[1])
 
+        if resultat_equipe2 < minimum:
+            equipes = [match[2]]
+            minimum = resultat_equipe1
+
+        elif resultat_equipe2 == minimum:
+            equipes.append(match[2])
+
+    return equipes
 
