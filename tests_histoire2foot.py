@@ -120,9 +120,13 @@ def test_resultats_equipe():
     assert histoire2foot.resultats_equipe(liste1, "Norway") == (0, 0, 1)
     assert histoire2foot.resultats_equipe(liste1, "Bulgaria") == (0, 1, 0)
     assert histoire2foot.resultats_equipe(liste4, "France") == (1, 0, 2)
+    assert histoire2foot.resultats_equipe(liste4, "Argentina") == (9, 1, 1)
 
 def test_plus_gros_scores():
     assert histoire2foot.plus_gros_scores(liste1) == [('1970-09-05', 'France', 'Czechoslovakia', 3, 0, 'Friendly', 'Nice', 'France', False)]
+    assert histoire2foot.plus_gros_scores(liste2) == [('1901-03-18', 'England', 'Wales', 6, 0, 'British Championship', 'Newcastle', 'England', False)]
+    assert histoire2foot.plus_gros_scores(liste3) == [('1903-04-04', 'Brazil', 'Argentina', 3, 0, 'Friendly', 'Sao Paulo', 'Brazil', False), ('1970-09-05', 'France', 'Czechoslovakia', 3, 0, 'Friendly', 'Nice', 'France', False)]
+    assert histoire2foot.plus_gros_scores([]) == []
 
 def test_liste_des_equipes():
     res=histoire2foot.liste_des_equipes(liste1)
@@ -179,7 +183,24 @@ def test_fusionner_matchs():
     assert histoire2foot.fusionner_matchs(liste2,liste3) == liste_fus
 
 def test_sauver_charger_matchs():
-    # A COMPLETER
-    ...
+    histoire2foot.sauver_matchs(liste1, "liste1.csv")
+    assert histoire2foot.charger_matchs("liste1.csv") == liste1
 
 # ajouter les tests manquants
+def test_plus_de_victoires_que_defaites():
+    assert histoire2foot.plus_de_victoires_que_defaites(liste1, "France") == True
+    assert histoire2foot.plus_de_victoires_que_defaites(liste2, "Romania") == False
+    assert histoire2foot.plus_de_victoires_que_defaites(liste3, "Belgium") == False
+    assert histoire2foot.plus_de_victoires_que_defaites(liste4, "Argentina") == True
+
+def test_matchs_spectaculaires():
+    assert histoire2foot.matchs_spectaculaires(liste1) == [('1970-11-11', 'France', 'Norway', 3, 1, 'UEFA Euro qualification', 'Lyon', 'France', False)]
+    assert histoire2foot.matchs_spectaculaires(liste2) == [('1901-03-18', 'England', 'Wales', 6, 0, 'British Championship', 'Newcastle', 'England', False)]
+    assert histoire2foot.matchs_spectaculaires(liste3) == [('1901-03-30', 'England', 'Scotland', 2, 2, 'British Championship', 'London', 'England', False), ('1970-11-11', 'France', 'Norway', 3, 1, 'UEFA Euro qualification', 'Lyon', 'France', False)]
+    assert histoire2foot.matchs_spectaculaires(liste4) == [('1978-06-06', 'Germany', 'Mexico', 6, 0, 'FIFA World Cup', 'Córdoba', 'Argentina', True), ('1978-06-14', 'Austria', 'Netherlands', 1, 5, 'FIFA World Cup', 'Córdoba', 'Argentina', True), ('1978-06-21', 'Argentina', 'Peru', 6, 0, 'FIFA World Cup', 'Rosario', 'Argentina', False)]
+
+def test_meilleures_equipes():
+    assert histoire2foot.meilleures_equipes(liste1) == ["France", "Bulgaria"]
+    assert histoire2foot.meilleures_equipes(liste2) == ["England"]
+    assert histoire2foot.meilleures_equipes(liste3) == ["Brazil", "Scotland", "France"]
+    assert histoire2foot.meilleures_equipes(liste4) == ["Brazil"]
