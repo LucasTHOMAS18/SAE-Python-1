@@ -246,19 +246,46 @@ def resultats_equipe(liste_matchs, equipe):
     nb_nul = 0
 
     for match in liste_matchs:
-        gagnant = equipe_gagnante(match)
+        if equipe == match[1] or equipe == match[2]:
+            gagnant = equipe_gagnante(match)
 
-        if gagnant == equipe:
-            nb_victoires += 1
+            if gagnant == equipe:
+                nb_victoires += 1
 
-        elif equipe in match:
-            if gagnant is None:
+            elif gagnant is None:
                 nb_nul += 1
 
             else:
                 nb_defaites += 1
 
     return nb_victoires, nb_nul, nb_defaites
+
+
+def max_liste(liste, key=lambda x: x):
+    """retourne une liste des éléments ayant la valeur maximale pour l'attribut spécifié par la fonction clé.
+
+    Args:
+        liste (list): La liste d'éléments à parcourir.
+        key (function, optional): Fonction pour extraire la valeur de l'attribut utilisé pour la comparaison.
+                                  Par défaut, utilise l'élément lui-même comme clé.
+
+    Returns:
+        list: Liste des éléments ayant la valeur maximale de l'attribut spécifié par la fonction clé.
+    """
+
+    maximum = float("-inf")
+    res = []
+
+    for elem in liste:
+        valeur_attribut = key(elem)
+        if valeur_attribut > maximum:
+            res = [elem]
+            maximum = valeur_attribut
+
+        elif valeur_attribut == maximum:
+            res.append(elem)
+
+    return res
 
 
 def plus_gros_scores(liste_matchs):
@@ -283,13 +310,16 @@ def liste_des_equipes(liste_matchs):
     Returns:
         list: une liste de str contenant le noms des équipes ayant jouer des matchs
     """
-    set_equipes = set()
+    equipes = []
 
     for match in liste_matchs:
-        set_equipes.add(match[1])
-        set_equipes.add(match[2])
+        if match[1] not in equipes: 
+            equipes.append(match[1])
 
-    return list(set_equipes)
+        if match[2] not in equipes:
+            equipes.append(match[2])
+
+    return equipes
 
 
 def premiere_victoire(liste_matchs, equipe):
@@ -325,7 +355,7 @@ def nb_matchs_sans_defaites(liste_matchs, equipe):
         if equipe_gagnante(match) == equipe:
             nb_victoires += 1
 
-        elif equipe in match:
+        elif equipe == match[1] or equipe == match[2]:
             if nb_victoires > max_nb_victoires:
                 max_nb_victoires = nb_victoires
             
@@ -358,7 +388,7 @@ def charger_matchs(nom_fichier):
             ligne[3] = int(ligne[3])
             ligne[4] = int(ligne[4])
             ligne[8] = ligne[8].lower() == "true"
-            liste.append(ligne)
+            liste.append(tuple(ligne))
 
     return liste
 
@@ -373,7 +403,7 @@ def sauver_matchs(liste_matchs,nom_fichier):
         None: cette fonction ne retourne rien
     """    
     
-    with open(nom_fichier, "w") as fichier_csv:
+    with open(nom_fichier, "w", newline="") as fichier_csv:
         writer = csv.writer(fichier_csv)
         writer.writerow(["date", "home_team", "away_team", "home_score", "away_score", "tournament", "city", "country", "neutral"])
 
@@ -391,33 +421,9 @@ def plus_de_victoires_que_defaites(liste_matchs, equipe):
     Returns:
         bool: True si l'equipe a obtenu plus de victoires que de défaites
     """
+    
     resultats = resultats_equipe(liste_matchs, equipe)
     return resultats[0] > resultats[2]
-
-def max_liste(liste, key=lambda x: x):
-    """retourne la liste de tout qui ont le plus d'un certain attribut passé en paramètre via "key".
-    Similaire a la fonction "max", mais retourne une liste à la place.
-
-    Args:
-        liste (list): une liste de matchs
-        key (Callable): fonction pour récupérer l'attribut que l'on souhaite comparé
-
-    Returns:
-        list: la liste de tout les element qui ont le plus de l'attribut
-    """
-    maximum = 0
-    res = []
-
-    for elem in liste:
-        attribut = key(elem)
-        if attribut > maximum:
-            res = [elem]
-            maximum = attribut
-
-        elif attribut == maximum:
-            res.append(elem)
-
-    return res
 
 
 def matchs_spectaculaires(liste_matchs):
@@ -443,7 +449,7 @@ def meilleures_equipes(liste_matchs):
         list: la liste des équipes qui ont le plus petit nombre de defaites
     """
     equipes = []
-    minimum = 0
+    minimum = float("inf")
 
     for match in liste_matchs:
         resultat_equipe1 = resultats_equipe(liste_matchs, match[1])[2]
@@ -453,15 +459,14 @@ def meilleures_equipes(liste_matchs):
             equipes = [match[1]]
             minimum = resultat_equipe1
 
-        elif resultat_equipe1 == minimum:
+        elif resultat_equipe1 == minimum and match[1] not in equipes:
             equipes.append(match[1])
 
         if resultat_equipe2 < minimum:
             equipes = [match[2]]
             minimum = resultat_equipe1
 
-        elif resultat_equipe2 == minimum:
+        elif resultat_equipe2 == minimum and match[2] not in equipes:
             equipes.append(match[2])
 
     return equipes
-
