@@ -380,15 +380,18 @@ def charger_matchs(nom_fichier):
     """    
     liste = []
 
-    with open(nom_fichier, "r", encoding="utf-8") as fichier_csv:
-        reader = csv.reader(fichier_csv)
-        next(reader)
+    try:
+        with open(nom_fichier, "r", encoding="utf-8") as fichier_csv:
+            reader = csv.reader(fichier_csv)
+            next(reader)
 
-        for ligne in reader:
-            ligne[3] = int(ligne[3])
-            ligne[4] = int(ligne[4])
-            ligne[8] = ligne[8].lower() == "true"
-            liste.append(tuple(ligne))
+            for ligne in reader:
+                ligne[3] = int(ligne[3])
+                ligne[4] = int(ligne[4])
+                ligne[8] = ligne[8].lower() == "true"
+                liste.append(tuple(ligne))
+    except:
+        return []
 
     return liste
 
