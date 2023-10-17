@@ -193,7 +193,7 @@ def est_bien_trie(liste_matchs):
     for i in range(1, len(liste_matchs)):
         match = liste_matchs[i]
         match_precedent = liste_matchs[i-1]
-        if match[0] + match[1] < match_precedent[0] + match_precedent[1]:
+        if match[0] + match[1] +  match[2] < match_precedent[0] + match_precedent[1] + match[2]:
             return False
 
     return True
@@ -215,7 +215,7 @@ def fusionner_matchs(liste_matchs1, liste_matchs2):
     j = 0
 
     while i < len(liste_matchs1) and j < len(liste_matchs2):
-        if liste_matchs1[i][0] + liste_matchs1[i][1] < liste_matchs2[j][0] + liste_matchs2[j][1]:
+        if liste_matchs1[i][0] + liste_matchs1[i][1] + liste_matchs1[i][2] < liste_matchs2[j][0] + liste_matchs2[j][1] + liste_matchs1[i][2]:
             if liste_matchs1[i] not in res:
                 res.append(liste_matchs1[i])
             
@@ -230,6 +230,7 @@ def fusionner_matchs(liste_matchs1, liste_matchs2):
     res += liste_matchs2[j:]
 
     return res
+
 
 def resultats_equipe(liste_matchs, equipe):
     """donne le nombre de victoire, de matchs nuls et de défaites pour une équipe donnée

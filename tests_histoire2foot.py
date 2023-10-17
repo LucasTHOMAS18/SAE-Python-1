@@ -149,12 +149,12 @@ def test_nb_matchs_sans_defaites():
     assert histoire2foot.nb_matchs_sans_defaites(liste3, "Belgium") == 0
 
 def test_est_bien_trie():
-    assert histoire2foot.est_bien_trie(liste1) == True
-    assert histoire2foot.est_bien_trie(liste2) == True
-    assert histoire2foot.est_bien_trie(liste3) == True
-    assert histoire2foot.est_bien_trie(liste4) == True
-    assert histoire2foot.est_bien_trie(liste1 + liste2) == False
-    assert histoire2foot.est_bien_trie([]) == True
+    assert histoire2foot.est_bien_trie(liste1)
+    assert histoire2foot.est_bien_trie(liste2)
+    assert histoire2foot.est_bien_trie(liste3)
+    assert histoire2foot.est_bien_trie(liste4)
+    assert not histoire2foot.est_bien_trie(liste1 + liste2)
+    assert histoire2foot.est_bien_trie([])
 
 def test_fusionner_matchs():
     liste_fus = [('1901-03-09', 'England', 'Northern Ireland', 3, 0, 'British Championship', 'Southampton', 'England', False), 

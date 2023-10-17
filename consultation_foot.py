@@ -44,7 +44,7 @@ def programme_principal():
         print("\033[91mAucun fichier .csv trouvé. \033[0m")
         sys.exit()
 
-    print("Voici la liste des fichiers .csv disponibles: ")
+    print("Voici la liste des fichiers .csv disponibles : ")
     for i, fichier in enumerate(recup_fichiers()):
         print(f" {i + 1}. {fichier}")
     
@@ -52,8 +52,14 @@ def programme_principal():
     numero_fichier = int(demander_nombre("\nQuel fichier .csv souhaitez-vous consulter ? ", 1, i+1))
 
     # Charge le fichier
-    fichier = histoire2foot.charger_matchs(liste_fichiers[numero_fichier])
-    
+    fichier = histoire2foot.charger_matchs(liste_fichiers[numero_fichier - 1 ])
+
+    # Affiche le menu
+    print("\nVoici la liste des actions possibles : ")
+    print(" 1. Consulter les statistiques d'un match")
+    print(" 2. Consulter les statistiques d'une équipe")
+    print(" 3. Autres")
+
 if __name__ == "__main__":
     programme_principal()
     
