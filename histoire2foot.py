@@ -145,13 +145,8 @@ def matchs_ville(liste_matchs, ville):
     Returns:
         list: la liste des matchs qui se sont déroulé dans la ville ville    
     """
-    matchs = []
 
-    for match in liste_matchs:
-        if match[6] == ville:
-            matchs.append(match)
-
-    return matchs
+    return [match for match in liste_matchs if match[6] == ville]
 
 
 def nombre_moyen_buts(liste_matchs, nom_competition):
@@ -263,15 +258,14 @@ def resultats_equipe(liste_matchs, equipe):
 
 
 def max_liste(liste, key=lambda x: x):
-    """retourne une liste des éléments ayant la valeur maximale pour l'attribut spécifié par la fonction clé.
+    """retourne une liste d'éléments de la liste d'entrée qui ont la valeur maximale de l'attribut spécifié par la fonction clé.
 
     Args:
-        liste (list): La liste d'éléments à parcourir.
-        key (function, optional): Fonction pour extraire la valeur de l'attribut utilisé pour la comparaison.
-                                  Par défaut, utilise l'élément lui-même comme clé.
+        liste (list): La liste d'entrée.
+        key (function, optional): La fonction utilisée pour extraire la valeur de l'attribut de chaque élément. Par défaut, lambda x: x.
 
     Returns:
-        list: Liste des éléments ayant la valeur maximale de l'attribut spécifié par la fonction clé.
+        list: Une liste d'éléments de la liste d'entrée qui ont la valeur maximale de l'attribut spécifié par la fonction clé.
     """
 
     maximum = float("-inf")
@@ -349,6 +343,7 @@ def nb_matchs_sans_defaites(liste_matchs, equipe):
     Returns:
         int: le plus grand nombre de matchs consécutifs sans défaite du pays nom_pays
     """
+    # TODO refaire cette fonction
     max_nb_victoires = 0
     nb_victoires = 0
     
@@ -428,7 +423,6 @@ def plus_de_victoires_que_defaites(liste_matchs, equipe):
     
     resultats = resultats_equipe(liste_matchs, equipe)
     return resultats[0] > resultats[2]
-
 
 def matchs_spectaculaires(liste_matchs):
     """retourne la liste des matchs les plus spectaculaires, c'est à dire les
