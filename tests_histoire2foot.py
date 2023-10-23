@@ -183,9 +183,9 @@ def test_fusionner_matchs():
     assert histoire2foot.fusionner_matchs(liste2,liste3) == liste_fus
 
 def test_sauver_charger_matchs():
-    histoire2foot.sauver_matchs(liste1, "liste1.csv")
-    assert histoire2foot.charger_matchs("liste1.csv") == liste1
-    assert histoire2foot.charger_matchs("patrick.owo") == []
+    histoire2foot.sauver_matchs(liste1, "csv/histoire_test.csv")
+    assert histoire2foot.charger_matchs("csv/histoire_test.csv") == liste1
+    assert histoire2foot.charger_matchs("csv/patrick.owo") == []
 
 # ajouter les tests manquants
 def test_plus_de_victoires_que_defaites():
