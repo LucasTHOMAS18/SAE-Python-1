@@ -373,7 +373,7 @@ def charger_matchs(nom_fichier):
 
     Returns:
         list: la liste des matchs du fichier
-    """    
+    """
     liste = []
 
     try:

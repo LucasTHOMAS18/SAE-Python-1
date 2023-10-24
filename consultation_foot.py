@@ -1,18 +1,31 @@
 import os
 import sys
+from pathlib import Path
 
 import histoire2foot
 
+# Constantes
+CHEMIN_CSV = Path(__file__).parent / "csv"
 
-# Ici vos fonctions dédiées aux interactions
-def clear():
+# Fonctions
+def clear() -> None:
+    """Nettoie le terminale."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def recup_fichiers():
+def recup_fichiers(chemin: Path = CHEMIN_CSV) -> list:
+    """Retourne la liste des fichier csv dans l'emplacement passé en paramètre.
+
+    Args:
+        chemin (str, optional): Emplacement des fichiers csv. Defaults to "".
+
+    Returns:
+        list: La liste des fichiers csv.
+    """
+
     liste_fichiers = []
 
-    for fichier in os.listdir():
+    for fichier in os.listdir(chemin):
         if fichier.endswith(".csv"):
             liste_fichiers.append(fichier)
 
@@ -41,15 +54,26 @@ def demander_entier(texte: str, debut: int = float("-inf"), fin: int = float("in
     return int(reponse)
 
 
-def stats_matchs():
+def afficher_liste_numerotee(liste: list) -> None:
+    """Affiche une liste numérotée.
+
+    Args:
+        liste (list): Liste.
+    """
+
+    for i, fichier in enumerate(liste):
+        print(f" {i + 1}. {fichier}")
+
+
+def stats_matchs(liste_matchs: list):
     pass
 
 
-def stats_equipes():
+def stats_equipes(liste_matchs: list):
     pass
 
 
-def stats_competition():
+def stats_competition(liste_matchs: list):
     pass
 
 
@@ -66,31 +90,31 @@ def programme_principal():
 \033[0m""")
 
     # Affiche la liste des fichiers
-    liste_fichiers = recup_fichiers()
+    liste_fichiers = recup_fichiers(chemin=Path(__file__) / "csv")
 
     if len(liste_fichiers) == 0:
         print("\033[91mAucun fichier .csv trouvé. \033[0m")
         sys.exit()
 
     print("Voici la liste des fichiers .csv disponibles : ")
-    for i, fichier in enumerate(recup_fichiers()):
-        print(f" {i + 1}. {fichier}")
+    afficher_liste_numerotee(liste_fichiers)
 
     # Demande à l'utilisateur quel fichier choisir
     numero_fichier = demander_entier("\nQuel fichier .csv souhaitez-vous consulter ? ", 1, len(liste_fichiers))
 
     # Charge le fichier
-    fichier = histoire2foot.charger_matchs(liste_fichiers[numero_fichier - 1])
-
+    liste_matchs = histoire2foot.charger_matchs(CHEMIN_CSV / liste_fichiers[numero_fichier - 1])
+    print(f"{len(liste_fichiers)} matchs chargés. \n")
+    
     # Affiche le menu
     print("\nVoici la liste des actions possibles : ")
     print(" 1. Consulter les statistiques d'un match")
     print(" 2. Consulter les statistiques d'une équipe")
-    print(" 3. Consulter les statistiques d'une compétition")
+    print(" 3. Consulter les statistiques d'une compétition\n")
 
     # Demande à l'utilisateur quelle option choisir
     categorie = demander_entier("Que voulez-vous faire ? ", 1, 3)
-    [stats_matchs, stats_equipes, stats_competition][categorie]()
+    [stats_matchs, stats_equipes, stats_competition][categorie - 1](liste_matchs)
 
 
 if __name__ == "__main__":
