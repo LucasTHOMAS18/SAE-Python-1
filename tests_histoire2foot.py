@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import histoire2foot
 
 # ---------------------------------------------------------------------------------------------
@@ -5,6 +7,8 @@ import histoire2foot
 # ---------------------------------------------------------------------------------------------
     
 # exemples de matchs de foot
+CHEMIN_CSV = Path(__file__).parent / "csv"
+
 match1 = ('2021-06-28', 'France', 'Switzerland', 3, 3, 'UEFA Euro', 'Bucharest', 'Romania', True)
 match2 = ('1998-07-12', 'France', 'Brazil', 3, 0, 'FIFA World Cup', 'Saint-Denis', 'France', False)
 match3 = ('1978-04-05', 'Germany', 'Brazil', 0, 1, 'Friendly', 'Hamburg', 'Germany', False)
@@ -183,9 +187,9 @@ def test_fusionner_matchs():
     assert histoire2foot.fusionner_matchs(liste2,liste3) == liste_fus
 
 def test_sauver_charger_matchs():
-    histoire2foot.sauver_matchs(liste1, "csv/histoire_test.csv")
-    assert histoire2foot.charger_matchs("csv/histoire_test.csv") == liste1
-    assert histoire2foot.charger_matchs("csv/patrick.owo") == []
+    histoire2foot.sauver_matchs(liste1, CHEMIN_CSV / "histoire_test.csv")
+    assert histoire2foot.charger_matchs(CHEMIN_CSV / "histoire_test.csv") == liste1
+    assert histoire2foot.charger_matchs(CHEMIN_CSV / "patrick.owo") == []
 
 # ajouter les tests manquants
 def test_plus_de_victoires_que_defaites():
@@ -205,3 +209,12 @@ def test_meilleures_equipes():
     assert histoire2foot.meilleures_equipes(liste2) == ["England"]
     assert histoire2foot.meilleures_equipes(liste3) == ["Brazil", "Scotland", "France"]
     assert histoire2foot.meilleures_equipes(liste4) == ["Brazil"]
+
+# test fonction perso
+def test_max_liste():
+    assert histoire2foot.max_liste([1, 2, 3, 4, 5]) == [5]
+    assert histoire2foot.max_liste([1, 2, 3, 5, 5]) == [5, 5]
+    assert histoire2foot.max_liste([1, 2, 3, 4, 5], key=lambda x: -x) == [1]
+    assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], key=lambda x: x['a']) == [{'a': 2, 'b': 1}]
+    assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], key=lambda x: x['b']) == [{'a': 1, 'b': 3}]
+    assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], key=lambda x: x['a'] + x['b']) == [{'a': 1, 'b': 3}]
