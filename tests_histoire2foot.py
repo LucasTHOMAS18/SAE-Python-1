@@ -3,12 +3,15 @@ from pathlib import Path
 import histoire2foot
 
 # ---------------------------------------------------------------------------------------------
-# Exemples de données pour vous aidez à faire des tests
+# Constantes
 # ---------------------------------------------------------------------------------------------
-    
-# exemples de matchs de foot
 CHEMIN_CSV = Path(__file__).parent / "csv"
 
+# ---------------------------------------------------------------------------------------------
+# Exemples de données pour vous aidez à faire des tests
+# ---------------------------------------------------------------------------------------------
+
+# exemples de matchs de foot
 match1 = ('2021-06-28', 'France', 'Switzerland', 3, 3, 'UEFA Euro', 'Bucharest', 'Romania', True)
 match2 = ('1998-07-12', 'France', 'Brazil', 3, 0, 'FIFA World Cup', 'Saint-Denis', 'France', False)
 match3 = ('1978-04-05', 'Germany', 'Brazil', 0, 1, 'Friendly', 'Hamburg', 'Germany', False)
@@ -115,9 +118,9 @@ def test_matchs_ville():
         ('1907-02-16', 'England', 'Northern Ireland', 1, 0, 'British Championship', 'Liverpool', 'England', False)]
 
 def test_nombre_moyen_buts():
-    assert histoire2foot.nombre_moyen_buts(liste1,'Friendly') == 7/3
-    assert histoire2foot.nombre_moyen_buts(liste4,'FIFA World Cup') == 102/37
-    assert histoire2foot.nombre_moyen_buts(liste3,'Friendly') == 3.0
+    assert histoire2foot.nombre_moyen_buts(liste1,lambda match: match[5] == 'Friendly') == 7/3
+    assert histoire2foot.nombre_moyen_buts(liste4,lambda match: match[5] == 'FIFA World Cup') == 102/37
+    assert histoire2foot.nombre_moyen_buts(liste3,lambda match: match[5] == 'Friendly') == 3.0
 
 def test_resultats_equipe():
     assert histoire2foot.resultats_equipe(liste1, "France") == (3, 1, 0)
@@ -205,16 +208,33 @@ def test_matchs_spectaculaires():
     assert histoire2foot.matchs_spectaculaires(liste4) == [('1978-06-06', 'Germany', 'Mexico', 6, 0, 'FIFA World Cup', 'Córdoba', 'Argentina', True), ('1978-06-14', 'Austria', 'Netherlands', 1, 5, 'FIFA World Cup', 'Córdoba', 'Argentina', True), ('1978-06-21', 'Argentina', 'Peru', 6, 0, 'FIFA World Cup', 'Rosario', 'Argentina', False)]
 
 def test_meilleures_equipes():
-    assert histoire2foot.meilleures_equipes(liste1) == ["France", "Bulgaria"]
-    assert histoire2foot.meilleures_equipes(liste2) == ["England"]
-    assert histoire2foot.meilleures_equipes(liste3) == ["Brazil", "Scotland", "France"]
-    assert histoire2foot.meilleures_equipes(liste4) == ["Brazil"]
+    # Conversion en set pour ignorer l'ordre qui n'est pas garanti
+    assert set(histoire2foot.meilleures_equipes(liste1)) == {"France", "Bulgaria"}
+    assert set(histoire2foot.meilleures_equipes(liste2)) == {"England"}
+    assert set(histoire2foot.meilleures_equipes(liste3)) == {"Brazil", "Scotland", "France"}
+    assert set(histoire2foot.meilleures_equipes(liste4)) == {"Brazil"}
 
 # test fonction perso
 def test_max_liste():
     assert histoire2foot.max_liste([1, 2, 3, 4, 5]) == [5]
     assert histoire2foot.max_liste([1, 2, 3, 5, 5]) == [5, 5]
-    assert histoire2foot.max_liste([1, 2, 3, 4, 5], key=lambda x: -x) == [1]
-    assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], key=lambda x: x['a']) == [{'a': 2, 'b': 1}]
-    assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], key=lambda x: x['b']) == [{'a': 1, 'b': 3}]
-    assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], key=lambda x: x['a'] + x['b']) == [{'a': 1, 'b': 3}]
+    assert histoire2foot.max_liste([1, 2, 3, 4, 5], cle=lambda x: -x) == [1]
+    assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], cle=lambda x: x['a']) == [{'a': 2, 'b': 1}]
+    assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], cle=lambda x: x['b']) == [{'a': 1, 'b': 3}]
+    assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], cle=lambda x: x['a'] + x['b']) == [{'a': 1, 'b': 3}]
+
+def test_liste_des_competitions():
+    assert histoire2foot.liste_des_competitions([]) == set()
+    assert histoire2foot.liste_des_competitions([match1]) == {'UEFA Euro'}
+    assert histoire2foot.liste_des_competitions(liste1) == {'Friendly', 'UEFA Euro qualification'}
+    assert histoire2foot.liste_des_competitions(liste2) == {'British Championship'}
+    assert histoire2foot.liste_des_competitions(liste3) == {'Friendly', 'British Championship', 'UEFA Euro qualification'}
+    assert histoire2foot.liste_des_competitions(liste4) == {'FIFA World Cup', 'Copa Ramón Castilla', 'Friendly'}
+
+def test_nombre_but():
+    assert histoire2foot.nb_but(liste1, lambda match: match[5] == 'Friendly') == 7
+    assert histoire2foot.nb_but(liste2, lambda match: match[5] == 'British Championship') == 47
+    assert histoire2foot.nb_but(liste3, lambda match: match[5] == 'Friendly') == 9
+    assert histoire2foot.nb_but(liste4, lambda match: match[5] == 'FIFA World Cup') == 102
+    assert histoire2foot.nb_but(liste4, lambda match: match[5] == 'OwO World Cup') == 0
+    assert histoire2foot.nb_but([], lambda match: match[5] == 'Friendly') == 0

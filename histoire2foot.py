@@ -89,8 +89,6 @@ liste4 = [('1978-03-19', 'Argentina', 'Peru', 2, 1, 'Copa Ramón Castilla', 'Bue
 # -----------------------------------------------------------------------------------------------------
 
 # Fonctions à implémenter dont les tests sont fournis
-
-
 def equipe_gagnante(match):
     """retourne le nom de l'équipe qui a gagné le match. Si c'est un match nul on retourne None
 
@@ -121,7 +119,6 @@ def victoire_a_domicile(match):
     return equipe_gagnante(match) == match[7]
 
 
-
 def nb_buts_marques(match):
     """indique le nombre total de buts marqués lors de ce match
 
@@ -149,21 +146,21 @@ def matchs_ville(liste_matchs, ville):
     return [match for match in liste_matchs if match[6] == ville]
 
 
-def nombre_moyen_buts(liste_matchs, nom_competition):
-    """retourne le nombre moyen de buts marqués par match pour une compétition donnée
-
+def nombre_moyen_buts(liste_matchs, cle=lambda _: True): # Ajout du paramètre cle permettant de filtrer les matchs, avec autre chose que la compétition
+    """retourne le nombre moyen de buts marqués, qui peut être filtré par la fonction cle
     Args:
         liste_matchs (list): une liste de matchs
-        nom_competition (str): le nom d'une compétition
+        cle (function, optional): une fonction qui permet de filtrer les matchs. Par défaut, lambda _: True (tous les matchs)
     
     Returns:
-        float: le nombre moyen de buts par match pour la compétition
+        float: le nombre moyen de buts marqués, filtrés par la fonction cle
     """
+
     nb_match = 0
     nb_but = 0
 
     for match in liste_matchs:
-        if match[5] == nom_competition:
+        if cle(match):
             nb_match += 1
             nb_but += match[3] + match[4]
 
@@ -257,43 +254,18 @@ def resultats_equipe(liste_matchs, equipe):
     return nb_victoires, nb_nul, nb_defaites
 
 
-def max_liste(liste, key=lambda x: x):
-    """retourne une liste d'éléments de la liste d'entrée qui ont la valeur maximale de l'attribut spécifié par la fonction clé.
-
-    Args:
-        liste (list): La liste d'entrée.
-        key (function, optional): La fonction utilisée pour extraire la valeur de l'attribut de chaque élément. Par défaut, lambda x: x.
-
-    Returns:
-        list: Une liste d'éléments de la liste d'entrée qui ont la valeur maximale de l'attribut spécifié par la fonction clé.
-    """
-
-    maximum = float("-inf")
-    res = []
-
-    for elem in liste:
-        valeur_attribut = key(elem)
-        if valeur_attribut > maximum:
-            res = [elem]
-            maximum = valeur_attribut
-
-        elif valeur_attribut == maximum:
-            res.append(elem)
-
-    return res
-
-
-def plus_gros_scores(liste_matchs):
+def plus_gros_scores(liste_matchs, cle=lambda _: True): # Ajout du paramètre cle permettant de filtrer les matchs
     """retourne la liste des matchs pour lesquels l'écart de buts entre le vainqueur et le perdant est le plus grand
 
     Args:
         liste_matchs (list): une liste de matchs
+        cle (function, optional): une fonction qui permet de filtrer les matchs. Par défaut, lambda _: True (tous les matchs)
 
     Returns:
         list: la liste des matchs avec le plus grand écart entre vainqueur et perdant
     """    
 
-    return max_liste(liste_matchs, key=lambda match: abs(match[3] - match[4]))
+    return max_liste(filter(cle, liste_matchs), cle=lambda match: abs(match[3] - match[4]))
 
 def liste_des_equipes(liste_matchs):
     """retourne la liste des équipes qui ont participé aux matchs de la liste
@@ -424,47 +396,153 @@ def plus_de_victoires_que_defaites(liste_matchs, equipe):
     resultats = resultats_equipe(liste_matchs, equipe)
     return resultats[0] > resultats[2]
 
-def matchs_spectaculaires(liste_matchs):
+
+def matchs_spectaculaires(liste_matchs, cle=lambda _: True): # Ajout du paramètre cle permettant de filtrer les matchs
     """retourne la liste des matchs les plus spectaculaires, c'est à dire les
-    matchs dont le nombre total de buts marqués est le plus grand
+    matchs dont le nombre total de buts marqués est le plus grand. On peut filtrer les matchs avec la fonction cle.
 
     Args:
         liste_matchs (list): une liste de matchs
+        cle (function, optional): une fonction qui permet de filtrer les matchs. Par défaut, lambda _: True (tous les matchs)
 
     Returns:
         list: la liste des matchs les plus spectaculaires
     """
 
-    return max_liste(liste_matchs, lambda match: match[3] + match[4])
+    return max_liste(liste_matchs, lambda match: match[3] + match[4] if cle(match) else 0)
 
-def meilleures_equipes(liste_matchs):
-    """retourne la liste des équipes de la liste qui ont le plus petit nombre de defaites
+
+def meilleures_equipes(liste_matchs, cle=lambda _: True): # Ajout du paramètre cle permettant de filtrer les matchs
+    """retourne la liste des équipes de la liste qui ont le plus petit nombre de defaites.
+    On peut filtrer les matchs avec la fonction cle.
 
     Args:
         liste_matchs (list): une liste de matchs
+        cle (function, optional): une fonction qui permet de filtrer les matchs. Par défaut, lambda _: True (toutes les matchs)
 
     Returns:
-        list: la liste des équipes qui ont le plus petit nombre de defaites
+        list: la liste des équipes qui ont le plus petit nombre de defaites (l'ordre n'est pas garanti)
     """
-    equipes = []
-    minimum = float("inf")
+
+    equipes = {} # Invariant de boucle : le dictionnaire des équipes ayant le plus petit nombre de défaites parmi les equipes déjà parcourus.
+    minimum = liste_matchs[0][1] # Invairant de boucle : l'equipe avec le moins de défaites parmi les equipes déjà parcourus.
 
     for match in liste_matchs:
-        resultat_equipe1 = resultats_equipe(liste_matchs, match[1])[2]
-        resultat_equipe2 = resultats_equipe(liste_matchs, match[2])[2]
+        if not cle(match): # Filtrage des matchs
+            continue
+        
+        defaite_equipe_1 = int(equipe_gagnante(match) not in {match[1], None})
+        equipes[match[1]] = equipes.get(match[1], 0) + defaite_equipe_1
+        minimum = min(match[1], minimum, key=lambda equipe: equipes[equipe])
 
-        if resultat_equipe1 < minimum:
-            equipes = [match[1]]
-            minimum = resultat_equipe1
+        defaite_equipe_2 = int(equipe_gagnante(match) not in {match[2], None})
+        equipes[match[2]] = equipes.get(match[2], 0) + defaite_equipe_2
+        minimum = min(match[2], minimum, key=lambda equipe: equipes[equipe])
+    
+    return [equipe for equipe, nb_defaites in equipes.items() if nb_defaites == equipes[minimum]]
 
-        elif resultat_equipe1 == minimum and match[1] not in equipes:
-            equipes.append(match[1])
+# -----------------------------------------------------------------------------------------------------
+# Fonctions supplémentaires
+# -----------------------------------------------------------------------------------------------------
 
-        if resultat_equipe2 < minimum:
-            equipes = [match[2]]
-            minimum = resultat_equipe1
+def liste_des_competitions(liste_matchs: list) -> set:
+    """Retourne la liste des compétitions présentes dans la liste de matchs.
 
-        elif resultat_equipe2 == minimum and match[2] not in equipes:
-            equipes.append(match[2])
+    Args:
+        liste_matchs (list): Une liste de matchs
 
-    return equipes
+    Returns:
+        set: Un ensemble contenant les noms des compétitions
+    """
+    
+    return set(map(lambda match: match[5], liste_matchs))
+
+def liste_des_villes(liste_matchs: list) -> set:
+    """Retourne la liste des villes présentes dans la liste de matchs.
+
+    Args:
+        liste_matchs (list): Une liste de matchs
+
+    Returns:
+        set: Un ensemble contenant les noms des villes
+    """
+
+    return set(map (lambda match: match[6], liste_matchs))
+
+
+def rechercher_par_date(liste_matchs: list, date: str) -> list:
+    """Retourne la liste des matchs s'étant déroulés à la date passée en paramètre.
+
+    Args:
+        liste_matchs (list): Une liste de matchs
+        date (str): Date au format AAAA-MM-JJ
+
+    Returns:
+        list: La liste des matchs s'étant déroulés à la date passée en paramètre
+    """
+
+    return list(filter(lambda match: match[0] == date, liste_matchs))
+
+
+def max_liste(liste, cle=lambda x: x):
+    """Retourne une liste d'éléments de la liste d'entrée qui ont la valeur maximale de l'attribut spécifié par la fonction clé.
+
+    Args:
+        liste (list): La liste d'entrée.
+        cle (function, optional): La fonction utilisée pour extraire la valeur de l'attribut de chaque élément. Par défaut, lambda x: x.
+
+    Returns:
+        list: Une liste d'éléments de la liste d'entrée qui ont la valeur maximale de l'attribut spécifié par la fonction clé.
+    """
+
+    maximum = float("-inf")
+    res = []
+
+    for elem in liste:
+        valeur_attribut = cle(elem)
+        if valeur_attribut > maximum:
+            res = [elem]
+            maximum = valeur_attribut
+
+        elif valeur_attribut == maximum:
+            res.append(elem)
+
+    return res
+
+
+def nb_but(liste_matchs: list, cle=lambda _: True) -> int:
+    """Retourne le nombre de buts marqués lors de la compétition passée en paramètre.
+
+    Args:
+        liste_matchs (list): Une liste de matchs
+        cle (function, optional): La fonction utilisée pour filtrer les matchs. Par défaut, lambda _: True.
+
+    Returns:
+        int: Le nombre de buts marqués lors de la compétition passée en paramètre.
+    """
+
+    nb_buts = 0 # Invariant de boucle : le nombre de buts des matchs déjà parcourus ayant eu lieu lors de la compétition passée en paramètre.
+    for match in liste_matchs:
+        if cle(match):
+            nb_buts += nb_buts_marques(match)
+
+    return nb_buts
+
+
+def nb_matchs(liste_matchs: list, cle=lambda _: True) -> int:
+    """Retourne le nombre de matchs ayant eu lieu lors de la compétition passée en paramètre.
+
+    Args:
+        liste_matchs (list): Une liste de matchs
+        cle (function, optional): La fonction utilisée pour filtrer les matchs. Par défaut, lambda _: True.
+
+    Returns:
+        int: Le nombre de matchs ayant eu lieu lors de la compétition passée en paramètre.
+    """
+
+    nb_matchs = 0 # Invariant de boucle : le nombre de matchs déjà parcourus ayant eu lieu lors de la compétition passée en paramètre.
+    for match in liste_matchs:
+        if cle(match):
+            nb_matchs += 1
+
+    return nb_matchs
