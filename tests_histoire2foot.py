@@ -231,10 +231,19 @@ def test_liste_des_competitions():
     assert histoire2foot.liste_des_competitions(liste3) == {'Friendly', 'British Championship', 'UEFA Euro qualification'}
     assert histoire2foot.liste_des_competitions(liste4) == {'FIFA World Cup', 'Copa Ramón Castilla', 'Friendly'}
 
-def test_nombre_but():
+def test_nb_but():
     assert histoire2foot.nb_but(liste1, lambda match: match[5] == 'Friendly') == 7
     assert histoire2foot.nb_but(liste2, lambda match: match[5] == 'British Championship') == 47
     assert histoire2foot.nb_but(liste3, lambda match: match[5] == 'Friendly') == 9
     assert histoire2foot.nb_but(liste4, lambda match: match[5] == 'FIFA World Cup') == 102
     assert histoire2foot.nb_but(liste4, lambda match: match[5] == 'OwO World Cup') == 0
     assert histoire2foot.nb_but([], lambda match: match[5] == 'Friendly') == 0
+
+def test_liste_des_villes():
+    assert histoire2foot.liste_des_villes(liste1) == ["Rouen", "Nice", "Reims", "Lyon"]
+
+def test_rechercher_par_date():
+    pass # TODO
+
+def test_nb_matchs():
+    pass # TODO
