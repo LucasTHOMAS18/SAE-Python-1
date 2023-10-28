@@ -349,7 +349,7 @@ def meilleures_equipes(liste_matchs: list) -> list:
     """
 
     equipes = {}  # Invariant de boucle : le dictionnaire des équipes ayant le plus petit nombre de défaites parmi les equipes déjà parcourus.
-    minimum = liste_matchs[0][1]  # Invairant de boucle : l'equipe avec le moins de défaites parmi les equipes déjà parcourus.
+    minimum = liste_matchs[0][1]  # Invariant de boucle : l'equipe avec le moins de défaites parmi les equipes déjà parcourus.
 
     for match in liste_matchs:
         defaite_equipe_1 = int(equipe_gagnante(match) not in {match[1], None})
