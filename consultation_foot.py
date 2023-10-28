@@ -1,5 +1,7 @@
+"""Fichier source de la SAE 1.01 partie 1"""
+
+# Importations
 import os
-import sys
 from pathlib import Path
 
 import histoire2foot
@@ -32,14 +34,14 @@ def recup_fichiers(chemin: Path = CHEMIN_CSV) -> list:
     return liste_fichiers
 
 
-def demander_entier(texte: str, debut: int = float("-inf"), fin: int = float("inf")) -> int:
+def demander_entier(texte: str, minimum: int = float("-inf"), maximum: int = float("inf")) -> int:
     """Demande un entier à l'utilisateur dans une certaine intervalle, 
     boucle tant que l'utilisateur ne rentre pas un entier valide.
 
     Args:
         texte (str): Texte à afficher à l'utilisateur.
-        debut (float, optional): Debut de l'intervalle inclu. Defaults to float("-inf").
-        fin (float, optional): Fin de l'intervalle inclu. Defaults to float("inf").
+        minimum (int, optional): Minimum de l'intervalle inclu. Defaults to float("-inf").
+        minimum (int, optional): Maximum de l'intervalle inclu. Defaults to float("inf").
 
     Returns:
         int: L'entier que l'utilisateur à rentré.
@@ -48,7 +50,7 @@ def demander_entier(texte: str, debut: int = float("-inf"), fin: int = float("in
     reponse = input(texte)
 
     # Demande à l'utilisteur un nouveau nombre, tant que celui-ci n'est pas un entier ou n'est pas dans l'intervalle
-    while not reponse.isnumeric() or debut > int(reponse) or int(reponse) > fin:
+    while not histoire2foot.est_un_entier(reponse, minimum, maximum):
         print("Choix invalide.")
         reponse = input(texte)
 
@@ -56,16 +58,16 @@ def demander_entier(texte: str, debut: int = float("-inf"), fin: int = float("in
 
 
 def afficher_liste_matchs(liste_matchs: list) -> None:
-    """Affiche une liste de matchs.
+    """Affiche une liste de matchs sous forme de tableau. 
 
     Args:
         liste_matchs (list): Liste de matchs.
     """
-
+    # Ne fait rien si la liste est vide
     if len(liste_matchs) == 0:
-        return []
+        return 
 
-    # Affiche l'entête
+    # Affiche l'entête, colonne par colonne en les centrant
     print("N°", end=" | ")
     print("Date".center(11), end=" | ")
     print("Equipe 1".center(11), end=" | ")
@@ -75,7 +77,7 @@ def afficher_liste_matchs(liste_matchs: list) -> None:
     print("Ville".center(16), end=" | ")
     print("Pays".center(16))
     
-    # Affiche les matchs
+    # Affiche les matchs, colonne par colonne en les centrant
     for i, match in enumerate(liste_matchs):
         print(f"{i + 1} ", end=" | ")
         print(match[0].center(11), end=" | ")
@@ -99,7 +101,7 @@ def afficher_liste_matchs(liste_matchs: list) -> None:
         
 
 def afficher_liste_numerotee(liste: list) -> None:
-    """Affiche une liste numérotée.
+    """Affiche une liste numérotée à partir de 1.
 
     Args:
         liste (list): Liste à afficher
@@ -132,7 +134,7 @@ def menu(liste_matchs: list, logo: bool=True) -> None:
     clear()
     afficher_logo()
 
-    # Affiche le menu
+    # Affiche le menu, avec le titre en couleur
     print("\033[0;34mVoici la liste des actions possibles : \033[0m")
     print(" 1. Consulter les statistiques d'un match")
     print(" 2. Consulter les statistiques d'une équipe")
@@ -142,7 +144,7 @@ def menu(liste_matchs: list, logo: bool=True) -> None:
     print(" 6. Charger un autre fichier .csv")
     print(" 7. Quitter\n")
 
-    # Demande à l'utilisateur quelle option choisir et execute la fonction correspondante
+    # Demande à l'utilisateur quelle option choisir
     categorie = demander_entier("Que voulez-vous faire (1:6)? ", 1, 7)
     clear()
     match categorie:
@@ -159,13 +161,13 @@ def menu(liste_matchs: list, logo: bool=True) -> None:
         case 6:
             charger_csv()
         case _:
-            sys.exit()
+            return 
 
 
-def stats_matchs(liste_matchs: list):
-    """Demande à l'utilisateur une date, affiche les matchs de cette date, 
-    demande à l'utilisateur quel match consulter, affiche les stats du match.
-
+def stats_matchs(liste_matchs: list) -> None:
+    """Demande à l'utilisateur une date, affiche tout les matchs de cette date, 
+    puis demande à l'utilisateur quel match consulter, et affiche les stats de celui-ci.
+    
     Args:
         liste_matchs (list): Une liste de matchs.
     """
@@ -216,7 +218,7 @@ def stats_matchs(liste_matchs: list):
         menu(liste_matchs)
 
 
-def stats_equipes(liste_matchs: list):
+def stats_equipes(liste_matchs: list) -> None:
     """Demande à l'utilisateur le nom d'une équipe, affiche les stats de l'équipe.
 
     Args:
@@ -240,15 +242,22 @@ def stats_equipes(liste_matchs: list):
     
     # Recupère les stats de l'équipe
     resultats = histoire2foot.resultats_equipe(liste_matchs, nom_equipe)
+    
+    liste_filtree = filter(lambda match: match[1] == nom_equipe or match[2] == nom_equipe, liste_matchs)
+    nb_buts = histoire2foot.nb_but(liste_filtree)
+    nb_buts_moyen = histoire2foot.nombre_moyen_buts(liste_filtree)
+
     premire_victoire = histoire2foot.premiere_victoire(liste_matchs, nom_equipe)
     nb_matchs_sans_defaites = histoire2foot.nb_matchs_sans_defaites(liste_matchs, nom_equipe)
     
     # Affiche les stats de l'équipe
     print(f"\n\033[0;34m{nom_equipe}\033[0m")
     print(f" Nombre de matchs joués : {resultats[0] + resultats[1] + resultats[2]}")
+    print(f" Nombre de buts marqués : {nb_buts}")
+    print(f" Nombre moyen de buts marqués par match : {nb_buts_moyen}")
     if premire_victoire is not None:
         print(f" Première victoire : {premire_victoire}")
-        print(f" Recors de matchs sans défaites consécutifs : {nb_matchs_sans_defaites}")
+        print(f" Recors de victoires consécutives : {nb_matchs_sans_defaites}")
     
     print(f" Nombre de victoires : {resultats[0]}")
     print(f" Nombre de matchs nuls : {resultats[1]}")
@@ -268,7 +277,7 @@ def stats_competition(liste_matchs: list) -> None:
         liste_matchs (list): Une liste de matchs.
     """
 
-    liste_competitions = list(histoire2foot.liste_des_competitions(liste_matchs))
+    liste_competitions = list(histoire2foot.ensemble_des_competitions(liste_matchs))
     nom_competition = input(f"Entrez le nom d'une compétition (Exemples : {', '.join(liste_competitions[:3])}  ) : ")
 
     # Verifie si la compétition existe, retourne au menu sinon
@@ -301,7 +310,7 @@ def stats_ville(liste_matchs: list) -> None:
         liste_matchs (list): Une liste de matchs.
     """
 
-    liste_villes = list(histoire2foot.liste_des_villes(liste_matchs))
+    liste_villes = list(histoire2foot.ensemble_des_villes(liste_matchs))
     nom_ville = input(f"Entrez le nom d'une ville (Exemples : {', '.join(liste_villes[:3])}) : ")
 
     # Verifie si la ville existe, retourne au menu sinon
@@ -334,13 +343,13 @@ def afficher_stats(liste_matchs: list) -> None:
         liste_matchs (list): Une liste de matchs.
     """
 
-    nb_matchs = histoire2foot.nb_matchs(liste_matchs)
+    nb_matchs = len(liste_matchs)
     nb_buts = histoire2foot.nb_but(liste_matchs)
     nombre_moyen_buts = round(histoire2foot.nombre_moyen_buts(liste_matchs), 3)
 
     matchs_spectaculaires = histoire2foot.matchs_spectaculaires(liste_matchs)
-    meilleures_equipes = histoire2foot.meilleures_equipes(liste_matchs)
     plus_gros_scores = histoire2foot.plus_gros_scores(liste_matchs)
+    meilleures_equipes = histoire2foot.meilleures_equipes(liste_matchs)
 
     # Affiche les stats des matchs
     print(f" Nombre de matchs joués : {nb_matchs}")
@@ -358,7 +367,7 @@ def afficher_stats(liste_matchs: list) -> None:
     afficher_liste_numerotee(meilleures_equipes)
 
 
-def stats_globales(liste_matchs: list):
+def stats_globales(liste_matchs: list) -> None:
     """Affiche les statistiques globales.
 
     Args:
@@ -395,7 +404,7 @@ def charger_csv() -> None:
     menu(liste_matchs)
 
 # ici votre programme principal
-def programme_principal():
+def programme_principal() -> None:
     """Programme principal."""
 
     clear()
