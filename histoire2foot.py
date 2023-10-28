@@ -183,9 +183,7 @@ def est_bien_trie(liste_matchs):
     """
 
     for i in range(1, len(liste_matchs)):
-        match = liste_matchs[i]
-        match_precedent = liste_matchs[i-1]
-        if match[0] + match[1] +  match[2] < match_precedent[0] + match_precedent[1] + match[2]:
+        if liste_matchs[i] < liste_matchs[i-1]:
             return False
 
     return True
@@ -205,7 +203,7 @@ def fusionner_matchs(liste_matchs1, liste_matchs2):
     res = []
     i = 0
     j = 0
-
+    
     while i < len(liste_matchs1) and j < len(liste_matchs2):
         if liste_matchs1[i][0] + liste_matchs1[i][1] + liste_matchs1[i][2] < liste_matchs2[j][0] + liste_matchs2[j][1] + liste_matchs1[i][2]:
             if liste_matchs1[i] not in res:
@@ -266,6 +264,7 @@ def plus_gros_scores(liste_matchs, cle=lambda _: True): # Ajout du paramètre cl
     """    
 
     return max_liste(filter(cle, liste_matchs), cle=lambda match: abs(match[3] - match[4]))
+
 
 def liste_des_equipes(liste_matchs):
     """retourne la liste des équipes qui ont participé aux matchs de la liste
@@ -363,6 +362,7 @@ def charger_matchs(nom_fichier):
 
     return liste
 
+
 def sauver_matchs(liste_matchs,nom_fichier):
     """sauvegarde dans un fichier au format CSV une liste de matchs
 
@@ -449,22 +449,23 @@ def liste_des_competitions(liste_matchs: list) -> set:
     """Retourne la liste des compétitions présentes dans la liste de matchs.
 
     Args:
-        liste_matchs (list): Une liste de matchs
+        liste_matchs (list): Une liste de matchs.
 
     Returns:
-        set: Un ensemble contenant les noms des compétitions
+        set: Un ensemble contenant les noms des compétitions.
     """
     
     return set(map(lambda match: match[5], liste_matchs))
+
 
 def liste_des_villes(liste_matchs: list) -> set:
     """Retourne la liste des villes présentes dans la liste de matchs.
 
     Args:
-        liste_matchs (list): Une liste de matchs
+        liste_matchs (list): Une liste de matchs.
 
     Returns:
-        set: Un ensemble contenant les noms des villes
+        set: Un ensemble contenant les noms des villes.
     """
 
     return set(map (lambda match: match[6], liste_matchs))
@@ -474,11 +475,11 @@ def rechercher_par_date(liste_matchs: list, date: str) -> list:
     """Retourne la liste des matchs s'étant déroulés à la date passée en paramètre.
 
     Args:
-        liste_matchs (list): Une liste de matchs
-        date (str): Date au format AAAA-MM-JJ
+        liste_matchs (list): Une liste de matchs.
+        date (str): Date au format AAAA-MM-JJ.
 
     Returns:
-        list: La liste des matchs s'étant déroulés à la date passée en paramètre
+        list: La liste des matchs s'étant déroulés à la date passée en paramètre.
     """
 
     return list(filter(lambda match: match[0] == date, liste_matchs))
@@ -495,8 +496,8 @@ def max_liste(liste, cle=lambda x: x):
         list: Une liste d'éléments de la liste d'entrée qui ont la valeur maximale de l'attribut spécifié par la fonction clé.
     """
 
-    maximum = float("-inf")
-    res = []
+    maximum = float("-inf") # Invariant de boucle : la valeur maximale de l'attribut spécifié par la fonction clé parmi les éléments déjà parcourus.
+    res = [] # Invariant de boucle : la liste des éléments ayant la valeur maximale de l'attribut spécifié par la fonction clé parmi les éléments déjà parcourus.
 
     for elem in liste:
         valeur_attribut = cle(elem)
@@ -514,7 +515,7 @@ def nb_but(liste_matchs: list, cle=lambda _: True) -> int:
     """Retourne le nombre de buts marqués lors de la compétition passée en paramètre.
 
     Args:
-        liste_matchs (list): Une liste de matchs
+        liste_matchs (list): Une liste de matchs.
         cle (function, optional): La fonction utilisée pour filtrer les matchs. Par défaut, lambda _: True.
 
     Returns:
@@ -533,7 +534,7 @@ def nb_matchs(liste_matchs: list, cle=lambda _: True) -> int:
     """Retourne le nombre de matchs ayant eu lieu lors de la compétition passée en paramètre.
 
     Args:
-        liste_matchs (list): Une liste de matchs
+        liste_matchs (list): Une liste de matchs.
         cle (function, optional): La fonction utilisée pour filtrer les matchs. Par défaut, lambda _: True.
 
     Returns:
