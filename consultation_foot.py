@@ -7,6 +7,7 @@ from pathlib import Path
 import histoire2foot
 
 # Constantes
+os.mkdir("csv") if not os.path.exists("csv") else None
 CHEMIN_CSV = Path(__file__).parent / "csv"
 
 # Fonctions
