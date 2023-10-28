@@ -210,7 +210,8 @@ def stats_matchs(liste_matchs: list) -> None:
     print(f" Nombre de buts marqués : {nb_buts}")
     print(f" Equipe gagnante : {equipe_gagnante}")
     print(f" Victoire à domicile : {victoire_a_domicile}\n")
-
+    print(f" Lieu : {match[6]} ({match[7]})")
+    
     # Demande à l'utilisateur si il veut consulter un autre match
     if input("\nVoulez-vous consulter un autre match (O/N) ? ").lower() == "o":
         stats_matchs(liste_matchs)
