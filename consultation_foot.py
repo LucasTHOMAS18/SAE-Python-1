@@ -90,13 +90,13 @@ def afficher_liste_matchs(liste_matchs: list) -> None:
 
         print(f"{match[3]}-{match[4]}".center(10), end=" | ")
 
-        competition = f"{match[5][:11].strip()}..." if len(match[5]) > 15 else match[5]
+        competition = f"{match[5][:11].strip()}..." if len(match[5]) > 16 else match[5]
         print(competition.center(16), end=" | ")
 
-        ville = f"{match[6][:9].strip()}..." if len(match[6]) > 13 else match[6]
+        ville = f"{match[6][:9].strip()}..." if len(match[6]) > 16 else match[6]
         print(ville.center(16), end=" | ")
 
-        pays = f"{match[7][:9].strip()}..." if len(match[7]) > 13 else match[7]
+        pays = f"{match[7][:9].strip()}..." if len(match[7]) > 16 else match[7]
         print(pays.center(16))
         
 
