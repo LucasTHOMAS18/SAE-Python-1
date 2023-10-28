@@ -296,21 +296,9 @@ def sauver_matchs(liste_matchs: list, nom_fichier: str) -> None:
     """
 
     try:
-        with open(nom_fichier, "w", newline="") as fichier_csv:
+        with open(nom_fichier, "w", encoding="utf-8", newline="") as fichier_csv:
             writer = csv.writer(fichier_csv)
-            writer.writerow(
-                [
-                    "date",
-                    "home_team",
-                    "away_team",
-                    "home_score",
-                    "away_score",
-                    "tournament",
-                    "city",
-                    "country",
-                    "neutral",
-                ]
-            )
+            writer.writerow(["date", "home_team", "away_team", "home_score", "away_score", "tournament", "city", "country", "neutral"])
 
             for match in liste_matchs:
                 writer.writerow(match)
