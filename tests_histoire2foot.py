@@ -118,9 +118,10 @@ def test_matchs_ville():
         ('1907-02-16', 'England', 'Northern Ireland', 1, 0, 'British Championship', 'Liverpool', 'England', False)]
 
 def test_nombre_moyen_buts():
-    assert histoire2foot.nombre_moyen_buts(liste1,lambda match: match[5] == 'Friendly') == 7/3
-    assert histoire2foot.nombre_moyen_buts(liste4,lambda match: match[5] == 'FIFA World Cup') == 102/37
-    assert histoire2foot.nombre_moyen_buts(liste3,lambda match: match[5] == 'Friendly') == 3.0
+    assert histoire2foot.nombre_moyen_buts(liste1, 'Friendly') == 7/3
+    assert histoire2foot.nombre_moyen_buts(liste2) == 47/16
+    assert histoire2foot.nombre_moyen_buts(liste4, 'FIFA World Cup') == 102/37
+    assert histoire2foot.nombre_moyen_buts(liste3, 'Friendly') == 3.0
 
 def test_resultats_equipe():
     assert histoire2foot.resultats_equipe(liste1, "France") == (3, 1, 0)
@@ -224,26 +225,38 @@ def test_max_liste():
     assert histoire2foot.max_liste([{'a': 1, 'b': 2}, {'a': 2, 'b': 1}, {'a': 1, 'b': 3}], cle=lambda x: x['a'] + x['b']) == [{'a': 1, 'b': 3}]
 
 def test_liste_des_competitions():
-    assert histoire2foot.liste_des_competitions([]) == set()
-    assert histoire2foot.liste_des_competitions([match1]) == {'UEFA Euro'}
-    assert histoire2foot.liste_des_competitions(liste1) == {'Friendly', 'UEFA Euro qualification'}
-    assert histoire2foot.liste_des_competitions(liste2) == {'British Championship'}
-    assert histoire2foot.liste_des_competitions(liste3) == {'Friendly', 'British Championship', 'UEFA Euro qualification'}
-    assert histoire2foot.liste_des_competitions(liste4) == {'FIFA World Cup', 'Copa Ramón Castilla', 'Friendly'}
+    assert histoire2foot.ensemble_des_competitions([]) == set()
+    assert histoire2foot.ensemble_des_competitions([match1]) == {'UEFA Euro'}
+    assert histoire2foot.ensemble_des_competitions(liste1) == {'Friendly', 'UEFA Euro qualification'}
+    assert histoire2foot.ensemble_des_competitions(liste2) == {'British Championship'}
+    assert histoire2foot.ensemble_des_competitions(liste3) == {'Friendly', 'British Championship', 'UEFA Euro qualification'}
+    assert histoire2foot.ensemble_des_competitions(liste4) == {'FIFA World Cup', 'Copa Ramón Castilla', 'Friendly'}
 
 def test_nb_but():
-    assert histoire2foot.nb_but(liste1, lambda match: match[5] == 'Friendly') == 7
-    assert histoire2foot.nb_but(liste2, lambda match: match[5] == 'British Championship') == 47
-    assert histoire2foot.nb_but(liste3, lambda match: match[5] == 'Friendly') == 9
-    assert histoire2foot.nb_but(liste4, lambda match: match[5] == 'FIFA World Cup') == 102
-    assert histoire2foot.nb_but(liste4, lambda match: match[5] == 'OwO World Cup') == 0
-    assert histoire2foot.nb_but([], lambda match: match[5] == 'Friendly') == 0
+    assert histoire2foot.nb_but(liste1) == 11
+    assert histoire2foot.nb_but(liste2) == 47
+    assert histoire2foot.nb_but(liste3) == 20
+    assert histoire2foot.nb_but(liste4) == 114
 
 def test_liste_des_villes():
-    assert histoire2foot.liste_des_villes(liste1) == ["Rouen", "Nice", "Reims", "Lyon"]
+    assert histoire2foot.ensemble_des_villes(liste1) == {'Rouen', 'Reims', 'Nice', 'Lyon'}
+    assert histoire2foot.ensemble_des_villes(liste2) == {'Southampton', 'Newcastle', 'London', 'Birmingham', 'Wolverhampton', 'Portsmouth', 'Liverpool', 'Bradford', 'Nottingham', 'Middlesbrough', 'Sheffield', 'Newcastle'}
+    assert histoire2foot.ensemble_des_villes(liste3) == {'Bruxelles', 'London', 'Sao Paulo', 'Nice', "Lyon", 'Sheffield'}
 
 def test_rechercher_par_date():
-    pass # TODO
+    assert histoire2foot.rechercher_par_date(liste1, '1970-04-28') == [('1970-04-28', 'France', 'Romania', 2, 0, 'Friendly', 'Reims', 'France', False)]
+    assert histoire2foot.rechercher_par_date(liste1, '1970-04-29') == []
+    assert histoire2foot.rechercher_par_date(liste2, '1901-03-09') == [('1901-03-09', 'England', 'Northern Ireland', 3, 0, 'British Championship', 'Southampton', 'England', False)]
+    assert histoire2foot.rechercher_par_date([], '1901-03-10') == []
+    assert histoire2foot.rechercher_par_date(liste4, '1978-06-11') == [('1978-06-11', 'Austria', 'Brazil', 0, 1, 'FIFA World Cup', 'Mar del Plata', 'Argentina', True), ('1978-06-11', 'Iran', 'Peru', 1, 4, 'FIFA World Cup', 'Córdoba', 'Argentina', True), ('1978-06-11', 'Netherlands', 'Scotland', 2, 3, 'FIFA World Cup', 'Mendoza', 'Argentina', True),  ('1978-06-11', 'Spain', 'Sweden', 1, 0, 'FIFA World Cup', 'Buenos Aires', 'Argentina', True)]
 
-def test_nb_matchs():
-    pass # TODO
+def test_est_un_entier():
+    assert histoire2foot.est_un_entier("621")
+    assert not histoire2foot.est_un_entier("621.42")
+    assert not histoire2foot.est_un_entier("-1", 0, 1)
+    assert not histoire2foot.est_un_entier("2", 0, 1)
+    assert histoire2foot.est_un_entier("0", 0, 1)
+    assert histoire2foot.est_un_entier("1", 0, 1)
+    assert not histoire2foot.est_un_entier("1", 2, 3)
+    assert not histoire2foot.est_un_entier("OwO")
+    assert not histoire2foot.est_un_entier("OwO", 0, 1)
