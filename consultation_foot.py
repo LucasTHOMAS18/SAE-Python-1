@@ -209,7 +209,7 @@ def stats_matchs(liste_matchs: list) -> None:
     print(f" Score : {match[3]}-{match[4]}")
     print(f" Nombre de buts marqués : {nb_buts}")
     print(f" Equipe gagnante : {equipe_gagnante}")
-    print(f" Victoire à domicile : {victoire_a_domicile}\n")
+    print(f" Victoire à domicile : {victoire_a_domicile}")
     print(f" Lieu : {match[6]} ({match[7]})")
     
     # Demande à l'utilisateur si il veut consulter un autre match
@@ -244,9 +244,9 @@ def stats_equipes(liste_matchs: list) -> None:
     # Recupère les stats de l'équipe
     resultats = histoire2foot.resultats_equipe(liste_matchs, nom_equipe)
     
-    liste_filtree = filter(lambda match: match[1] == nom_equipe or match[2] == nom_equipe, liste_matchs)
+    liste_filtree = list(filter(lambda match: match[1] == nom_equipe or match[2] == nom_equipe, liste_matchs))
     nb_buts = histoire2foot.nb_but(liste_filtree)
-    nb_buts_moyen = histoire2foot.nombre_moyen_buts(liste_filtree)
+    nb_moyen_buts = round(histoire2foot.nombre_moyen_buts(liste_matchs), 3)
 
     premire_victoire = histoire2foot.premiere_victoire(liste_matchs, nom_equipe)
     nb_matchs_sans_defaites = histoire2foot.nb_matchs_sans_defaites(liste_matchs, nom_equipe)
@@ -255,7 +255,8 @@ def stats_equipes(liste_matchs: list) -> None:
     print(f"\n\033[0;34m{nom_equipe}\033[0m")
     print(f" Nombre de matchs joués : {resultats[0] + resultats[1] + resultats[2]}")
     print(f" Nombre de buts marqués : {nb_buts}")
-    print(f" Nombre moyen de buts marqués par match : {nb_buts_moyen}")
+    print(f" Nombre moyen de buts marqués par match : {nb_moyen_buts}")
+
     if premire_victoire is not None:
         print(f" Première victoire : {premire_victoire}")
         print(f" Recors de victoires consécutives : {nb_matchs_sans_defaites}")
@@ -346,7 +347,7 @@ def afficher_stats(liste_matchs: list) -> None:
 
     nb_matchs = len(liste_matchs)
     nb_buts = histoire2foot.nb_but(liste_matchs)
-    nombre_moyen_buts = round(histoire2foot.nombre_moyen_buts(liste_matchs), 3)
+    nb_moyen_buts = round(histoire2foot.nombre_moyen_buts(liste_matchs), 3)
 
     matchs_spectaculaires = histoire2foot.matchs_spectaculaires(liste_matchs)
     plus_gros_scores = histoire2foot.plus_gros_scores(liste_matchs)
@@ -355,7 +356,7 @@ def afficher_stats(liste_matchs: list) -> None:
     # Affiche les stats des matchs
     print(f" Nombre de matchs joués : {nb_matchs}")
     print(f" Nombre de buts marqués : {nb_buts}")
-    print(f" Nombre moyen de buts par match : {nombre_moyen_buts}")
+    print(f" Nombre moyen de buts par match : {nb_moyen_buts}")
 
     print(f"\nLes matchs avec le plus grand nombre de buts marqués : ")
     afficher_liste_matchs(matchs_spectaculaires)
