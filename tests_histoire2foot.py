@@ -122,6 +122,8 @@ def test_nombre_moyen_buts():
     assert histoire2foot.nombre_moyen_buts(liste2) == 47/16
     assert histoire2foot.nombre_moyen_buts(liste4, 'FIFA World Cup') == 102/37
     assert histoire2foot.nombre_moyen_buts(liste3, 'Friendly') == 3.0
+    assert histoire2foot.nombre_moyen_buts([]) == 0.0
+    assert histoire2foot.nombre_moyen_buts([], "Albert") == 0.0
 
 def test_resultats_equipe():
     assert histoire2foot.resultats_equipe(liste1, "France") == (3, 1, 0)
