@@ -122,9 +122,9 @@ def fusionner_matchs(liste_matchs1: list, liste_matchs2: list) -> list:
         list: la liste triée sans doublon comportant tous les matchs de liste_matchs1 et liste_matchs2
     """
 
-    res = []
-    i = 0
-    j = 0
+    res = [] # Invariant de boucle : la liste triée sans doublon comportant tous les matchs de liste_matchs1 et liste_matchs2 déjà parcourus.
+    i = 0 # Invariant de boucle : le nombre d'éléments de liste_matchs1 déjà parcourus.
+    j = 0 # Invariant de boucle : le nombre d'éléments de liste_matchs2 déjà parcourus.
 
     while i < len(liste_matchs1) and j < len(liste_matchs2):
         if liste_matchs1[i] < liste_matchs2[j]:
@@ -155,9 +155,9 @@ def resultats_equipe(liste_matchs: list, equipe: str) -> tuple:
         tuple: un triplet d'entiers contenant le nombre de victoires, nuls et défaites de l'équipe
     """
 
-    nb_victoires = 0
-    nb_defaites = 0
-    nb_nul = 0
+    nb_victoires = 0 # Invariant de boucle : le nombre de victoires de l'équipe déjà parcourus dans la liste.
+    nb_defaites = 0 # Invariant de boucle : le nombre de défaites de l'équipe déjà parcourus dans la liste.	
+    nb_nul = 0 # Invariant de boucle : le nombre de matchs nuls de l'équipe déjà parcourus dans la liste.
 
     for match in liste_matchs:
         if equipe == match[1] or equipe == match[2]:
@@ -199,7 +199,7 @@ def liste_des_equipes(liste_matchs :list) -> list:
         list: une liste de str contenant le noms des équipes ayant jouer des matchs
     """
 
-    equipes = []
+    equipes = [] # Invariant de boucle : la liste des équipes ayant joué des matchs parmi les matchs déjà parcourus.
 
     for match in liste_matchs:
         if match[1] not in equipes:
@@ -238,8 +238,8 @@ def nb_matchs_sans_defaites(liste_matchs: list, equipe: str) -> int:
         int: le plus grand nombre de matchs consécutifs sans défaite du pays nom_pays
     """
 
-    max_nb_victoires = 0
-    nb_victoires = 0
+    max_nb_victoires = 0 # Invariant de boucle : le plus grand nombre de matchs consécutifs sans défaite du pays parmi les matchs déjà parcourus.
+    nb_victoires = 0 # Invariant de boucle : le nombre de matchs consécutifs sans défaite du pays parmi les matchs déjà parcourus.
 
     for match in liste_matchs:
         if equipe == match[1] or equipe == match[2]:
@@ -270,7 +270,7 @@ def charger_matchs(nom_fichier: str) -> list:
     Returns:
         list: la liste des matchs du fichier
     """
-    liste = []
+    liste = [] # Invariant de boucle : la liste des matchs déjà parcourus du fichier csv.
 
     try:
         with open(nom_fichier, "r", encoding="utf-8") as fichier_csv:
