@@ -252,11 +252,12 @@ def test_rechercher_par_date():
 
 def test_est_un_entier():
     assert histoire2foot.est_un_entier("621")
-    assert not histoire2foot.est_un_entier("621.42")
+    assert not histoire2foot.est_un_entier("3.621")
     assert not histoire2foot.est_un_entier("-1", 0, 1)
     assert not histoire2foot.est_un_entier("2", 0, 1)
     assert histoire2foot.est_un_entier("0", 0, 1)
     assert histoire2foot.est_un_entier("1", 0, 1)
     assert not histoire2foot.est_un_entier("1", 2, 3)
     assert not histoire2foot.est_un_entier("OwO")
-    assert not histoire2foot.est_un_entier("OwO", 0, 1)
+    assert not histoire2foot.est_un_entier("Shrek 2", 0, 1)
+    assert not histoire2foot.est_un_entier("1970-04-28")
