@@ -82,10 +82,10 @@ def afficher_liste_matchs(liste_matchs: list) -> None:
         print(f"{i + 1} ", end=" | ")
         print(match[0].center(11), end=" | ")
 
-        equipe1 = f"{match[1][:8].strip()}..." if len(match[1]) > 13 else match[1]
+        equipe1 = f"{match[1][:8].strip()}..." if len(match[1]) > 11 else match[1]
         print(equipe1.center(11), end=" | ")
 
-        equipe2 = f"{match[2][:8].strip()}..." if len(match[2]) > 13 else match[2]
+        equipe2 = f"{match[2][:8].strip()}..." if len(match[2]) > 11 else match[2]
         print(equipe2.center(11), end=" | ")
 
         print(f"{match[3]}-{match[4]}".center(10), end=" | ")
@@ -246,7 +246,7 @@ def stats_equipes(liste_matchs: list) -> None:
     
     liste_filtree = list(filter(lambda match: match[1] == nom_equipe or match[2] == nom_equipe, liste_matchs))
     nb_buts = histoire2foot.nb_but(liste_filtree)
-    nb_moyen_buts = round(histoire2foot.nombre_moyen_buts(liste_matchs), 3)
+    nb_moyen_buts = round(histoire2foot.nombre_moyen_buts(liste_filtree), 3)
 
     premire_victoire = histoire2foot.premiere_victoire(liste_matchs, nom_equipe)
     nb_matchs_sans_defaites = histoire2foot.nb_matchs_sans_defaites(liste_matchs, nom_equipe)
