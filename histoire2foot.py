@@ -474,5 +474,8 @@ def est_un_entier(chaine: str,  minimum: int = float("-inf"), maximum: int = flo
         bool: True si la chaîne passée en paramètre est un entier compris entre minimum et maximum, False sinon.
     """
 
-    # Ignore le signe moins, puis vérifie si la chaîne est un entier compris entre minimum et maximum.
-    return chaine.replace("-", "").isnumeric() and minimum <= int(chaine) <= maximum
+    try:
+        return "." not in chaine and minimum <= int(chaine) <= maximum
+    
+    except ValueError:
+        return False
