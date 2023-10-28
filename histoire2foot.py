@@ -68,6 +68,7 @@ def matchs_ville(liste_matchs: list, ville: str) -> list:
 
 def nombre_moyen_buts(liste_matchs: list, nom_competition: str = None) -> float:  
     """retourne le nombre moyen de buts marqués, qui peut être filtré par compétition
+
     Args:
         liste_matchs (list): une liste de matchs
         nom_competition (str, optional): le nom d'une compétition. Si None, on ne filtre pas par compétition. Defaults to None.
@@ -76,8 +77,8 @@ def nombre_moyen_buts(liste_matchs: list, nom_competition: str = None) -> float:
         float: le nombre moyen de buts marqués lors des matchs de la compétition nom_competition (ou de tous les matchs si nom_competition est None)
     """    
 
-    nb_match = 0
-    nb_but = 0
+    nb_match = 0 # Invariant de boucle : le nombre de matchs déjà parcourus.
+    nb_but = 0 # Invariant de boucle : le nombre de buts des matchs déjà parcourus.
 
     for match in liste_matchs:
         if nom_competition is None or match[5] == nom_competition:
